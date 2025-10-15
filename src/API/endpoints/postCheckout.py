@@ -27,7 +27,7 @@ headers = {
 app = Flask(__name__)
 @app.post("/checkout")
 def checkoutEndpoint():
-    payload = request.get_json() or {}
+    payload = request.get_json()
     parameters = {
         "mode": "payment",
         "success_url": "https://via.lv/test",
