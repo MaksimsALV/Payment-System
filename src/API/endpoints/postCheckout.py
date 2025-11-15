@@ -1,6 +1,8 @@
 import http.client
 import json
 import urllib
+from src.DB.insertOrderToDatabase import insertOrder
+
 
 from flask import Flask, request, jsonify
 
@@ -46,6 +48,8 @@ def checkoutEndpoint():
     connect.close()
 
     responseJson = json.loads(responseData)
+    if response.status == 200:
+        insertOrder(payload, responseJson)
     return jsonify(responseJson.get("url"))
 
 app.run(host="127.0.0.1", port=5000)
