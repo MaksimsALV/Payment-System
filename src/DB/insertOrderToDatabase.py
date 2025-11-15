@@ -1,9 +1,10 @@
 from datetime import datetime, timezone
-from random import random
 
 import psycopg2
 
 def insertOrder(payload, responseJson):
+    isPaid = (responseJson["payment_status"] == "paid")
+
     conn = psycopg2.connect(
         host="localhost",
         port="5432",
@@ -15,18 +16,18 @@ def insertOrder(payload, responseJson):
     cursor = conn.cursor()
     cursor.execute("""
         INSERT INTO public.orders (
-        id, product_name, payment_status, amount, currency, quantity, customer_email, created_at, updated_at)
+        id, product_name, is_paid, amount, currency, quantity, customer_email, created_at_utc, updated_at_utc)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
         """, (
         responseJson["id"],
         payload["product_name"],
-        responseJson["payment_status"],
-        payload["amount"],
+        isPaid,
+        payload["amount"] / 100,
         payload["currency"].upper(),
         payload["quantity"],
         payload["customer_email"],
-        datetime.now(timezone.utc),
-        datetime.now(timezone.utc)
+        datetime.utcnow(),
+        datetime.utcnow()
     ))
     conn.commit()
     cursor.close()
