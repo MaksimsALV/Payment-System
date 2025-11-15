@@ -3,7 +3,6 @@ from datetime import datetime, timezone
 import psycopg2
 
 def insertOrder(payload, responseJson):
-    isPaid = (responseJson["payment_status"] == "paid")
 
     conn = psycopg2.connect(
         host="localhost",
@@ -21,7 +20,7 @@ def insertOrder(payload, responseJson):
         """, (
         responseJson["id"],
         payload["product_name"],
-        isPaid,
+        responseJson["payment_status"] == "paid",
         payload["amount"] / 100,
         payload["currency"].upper(),
         payload["quantity"],
