@@ -2,6 +2,7 @@ import http.client
 import json
 import urllib
 from src.DB.insertOrderToDatabase import insertOrder
+from src.web.shop import shop_ui
 
 
 from flask import Flask, request, jsonify
@@ -16,12 +17,13 @@ headers = {
 }
 
 app = Flask(__name__)
+app.register_blueprint(shop_ui)
 @app.post("/checkout")
 def checkoutEndpoint():
     payload = request.get_json()
     parameters = {
         "mode": "payment",
-        "success_url": "https://via.lv/test",
+        "success_url": "https://b.stripecdn.com/docs-statics-srv/assets/succeeded.949bd1ab653cc1b01743b30d117d92eb.svg",
         "line_items[0][price_data][currency]": payload["currency"],
         "line_items[0][price_data][unit_amount]": payload["amount"],
         "line_items[0][quantity]": payload["quantity"],
